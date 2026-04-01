@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="zh-Hant-TW">
 <head>
@@ -86,7 +87,9 @@
     color: rgb(106, 76, 156);
     font-family: 'CircleFont', 'Noto Sans JP', serif;
   }
-
+  p{
+    font-family:'LXGW WenKai Mono TC';
+  }
   .container-fluid {
     width:  90%;
   }
@@ -156,7 +159,17 @@
       透過這次「生成式人工智慧導論」的課程作業，我難得有機會完整書寫《千字文》與《長恨歌》等古典文學。這是我自國中畢業以來，首度靜下心來抄寫如此大量的課文。在反覆一筆一劃書寫的過程中，我深深被經典的文字之美所吸引。《千字文》四字一句、韻律優美，濃縮了古人對天地萬物的宏觀智慧；《長恨歌》則透過細膩的情感刻畫，將唐玄宗與楊貴妃之間刻骨銘心的愛情悲劇展現得淋漓盡致。這次的作業不僅讓我重新體會文學的純粹價值，更讓我在現代科技的學習洪流中得以沉澱自我，跨越時空汲取古人豐富的歷史底蘊與人生哲理。
     </div>
   </div>
-
+  <!-- ------------------------------------------------>
+  <div class="row hw12">
+    <div class="col-md-12 twenty">
+      <span>倉庫位置連結： </span>
+      <br>
+      <button type="button" onclick="location.href='https://github.com/0mago0/ai2026s/tree/main/hw01'">
+        前往 hw01 倉庫
+      </button>
+      <div>(p.s 請記得修改網址)</div>
+    </div>
+  </div>
   <!-- ------------------------------------------------>
   <div class="row hw12">
     <div class="col-md-12 twenty">
@@ -169,22 +182,22 @@
         </tr>
         <tr>
           <td rowspan="4" id="myTotal"></td>
-          <td><input type="checkbox" class="flipswitch" id="myCheckbox1"></td>
+          <td><input type="checkbox" class="flipswitch" id="myCheckbox1" checked></td>
           <td id='m1'>4</td>
-          <td>Simple baseline - 描述</td>
+          <td>Simple baseline</td>
         </tr>
         <tr>
-          <td><input type="checkbox" class="flipswitch" id="myCheckbox2"></td>
+          <td><input type="checkbox" class="flipswitch" id="myCheckbox2" checked></td>
           <td id='m2'>4</td>
-          <td>Medium baseline - 描述</td>
+          <td>Medium baseline</td>
         </tr>
         <tr>
-          <td><input type="checkbox" class="flipswitch" id="myCheckbox3"></td>
+          <td><input type="checkbox" class="flipswitch" id="myCheckbox3" checked></td>
           <td id='m3'>2</td>
-          <td>Strong baseline - 描述</td>
+          <td>Strong baseline</td>
         </tr>
         <tr>
-          <td><input type="checkbox" class="flipswitch" id="myCheckbox4" checked></td>
+          <td><input type="checkbox" class="flipswitch" id="myCheckbox4"></td>
           <td id='m4'>-10</td>
           <td>沒有寫100字心得</td>
         </tr>
@@ -195,15 +208,41 @@
 
   <!-- ------------------------------------------------>
   <div class="row hw12 bottomrow">
-    <div class="col-md-12 twenty">
-      <video id="video1" style="width:100%;max-width:100%;" controls="">
-        <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
-      </video>
+    <div class="col-md-3 twenty">
+      <figcaption>1. 千字文 第1頁</figcaption>
+      <img class="withborder" src="./svg/U+5929.svg" width="100%">
+    </div>
+    <div class="col-md-3 twenty">
+      <figcaption>2. 長恨歌 第1頁</figcaption>
+      <img class="withborder" src="./svg/U+6F22.svg" width="100%">
+    </div>
+    <div class="col-md-3 twenty">
+      <figcaption>3. 洛神賦 第1頁</figcaption>
+      <img class="withborder" src="./svg/U+9EC3.svg" width="100%">
+    </div>
+    <div class="col-md-3 twenty">
+      <figcaption>4. 詩經 第1頁</figcaption>
+      <img class="withborder" src="./svg/U+9752.svg" width="100%">
+    </div>
+    <div class="col-md-3 twenty">
+      <figcaption>5. 注音、部首 第1頁</figcaption>
+      <img class="withborder" src="./svg/U+02C7.svg" width="100%">
+    </div>
+    <div class="col-md-3 twenty">
+      <figcaption>6. 英文、數字 第1頁</figcaption>
+      <img class="withborder" src="./svg/U+0030.svg" width="100%">
+    </div>
+    <div class="col-md-3 twenty">
+      <figcaption> 7. 標點符號 第1頁</figcaption>
+      <img class="withborder" src="./svg/U+0021.svg" width="100%">
+    </div>
+    <div class="col-md-3 twenty">
+      <figcaption> 8. 姓氏名字號 第1頁</figcaption>
+      <img class="withborder" src="./svg/U+54F2.svg" width="100%">
     </div>
   </div>
 
   <!-- ------------------------------------------------>
-
   <!-- ------------------------------------------------>
 
 
@@ -252,4 +291,3 @@
 
 </body>
 </html>
-

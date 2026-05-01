@@ -264,6 +264,6 @@ if __name__ == "__main__":
     medium_files = list((base_path / "pico_Medium").glob("*.svg")) + simple_files
     create_svg_font_from_files(medium_files, "outputs_Medium.svg")
 
-    # 3. Strong = hw03/outputs_Strong + Medium
-    strong_files = list((base_path / "outputs_Strong").glob("*.svg")) + medium_files
+    # 3. Strong = hw03/pico_Strong + Medium
+    strong_files = list((base_path / "pico_Strong").glob("*.svg")) + medium_files
     create_svg_font_from_files(strong_files, "outputs_Strong.svg")

@@ -6,27 +6,7 @@ from concurrent.futures import ThreadPoolExecutor
 
 BASE = Path(__file__).parent
 
-input_folder = BASE / "outputs_Simple"
-input_folder = BASE / "outputs_Medium"
-input_folder = BASE / "outputs_Strong"
-
-output_folder = BASE / "pico_Simple"
-output_folder = BASE / "pico_Medium"
-output_folder = BASE / "pico_Strong"
-
 concurrency = 10
-
-def process_single_file(filename):
-    if not filename.endswith(".svg"):
-        return
-    input_path = input_folder / filename
-    output_path = output_folder / filename
-    try:
-        with open(output_path, "w") as out_file:
-            subprocess.run(["picosvg", str(input_path)], stdout=out_file, check=True)
-        print(f"Successfully processed: {filename}")
-    except Exception as e:
-        print(f"Error processing {filename}: {e}")
 
 if __name__ == "__main__":
     start_time = time.time()
@@ -39,9 +19,16 @@ if __name__ == "__main__":
             continue
             
         output_folder.mkdir(exist_ok=True)
-        print(f"Processing {mode}...")
         
         files = [f for f in os.listdir(input_folder) if f.endswith(".svg")]
+        
+        # 檢查是否所有檔案都已存在於輸出資料夾
+        existing_files = [f for f in os.listdir(output_folder) if f.endswith(".svg")]
+        if len(existing_files) >= len(files) and len(files) > 0:
+            print(f"Skipping {mode}: All files already processed in {output_folder}.")
+            continue
+
+        print(f"Processing {mode}...")
         with ThreadPoolExecutor(max_workers=concurrency) as executor:
             def process_file(filename):
                 input_path = input_folder / filename

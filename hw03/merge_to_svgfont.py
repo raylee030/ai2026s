@@ -104,6 +104,10 @@ def create_svg_font_with_flip(input_folder_name, output_file_name):
     output_dir = Path('final_font')
     output_path = output_dir / output_file_name
 
+    if output_path.exists():
+        print(f"字體檔案 {output_file_name} 已存在，跳過處理。")
+        return
+
     if not input_folder.exists():
         print(f"資料夾 {input_folder_name} 不存在，跳過。")
         return

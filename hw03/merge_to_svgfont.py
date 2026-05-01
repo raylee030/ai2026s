@@ -98,9 +98,8 @@ def transform_tokens_with_shift(tokens, global_origin_x, global_origin_y, unifor
     
     return new_tokens
 
-def create_svg_font_with_flip(input_folder_name, output_file_name):
+def create_svg_font_from_files(svg_files, output_file_name):
     font_name = 'MyFont'
-    input_folder = Path(input_folder_name)
     output_dir = Path('final_font')
     output_path = output_dir / output_file_name
 
@@ -108,8 +107,8 @@ def create_svg_font_with_flip(input_folder_name, output_file_name):
         print(f"字體檔案 {output_file_name} 已存在，跳過處理。")
         return
 
-    if not input_folder.exists():
-        print(f"資料夾 {input_folder_name} 不存在，跳過。")
+    if not svg_files:
+        print(f"無有效 SVG 檔案供 {output_file_name} 使用，跳過。")
         return
 
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -124,128 +123,111 @@ def create_svg_font_with_flip(input_folder_name, output_file_name):
       descent="0" />
     <missing-glyph horiz-adv-x="0" />
 '''
-    
-    svg_files = sorted(list(input_folder.glob("*.svg")))
-    
+
     # 第一遍掃描：收集每個字形的 bounding box
-    print(f"掃描 {input_folder_name} 中的 SVG...")
+    print(f"掃描共 {len(svg_files)} 個 SVG 檔案用於 {output_file_name}...")
     all_min_x = []
     all_max_x = []
     all_min_y = []
     all_max_y = []
-    
+
+    # 使用字典來處理重複的字形 (U+XXXX)，以最後出現的為準或自定義優先權
+    unique_glyphs = {}
     for svg_path in svg_files:
+        match = re.search(r'[Uu]\+([0-9A-Fa-f]+)', svg_path.name)
+        if match:
+            unique_glyphs[match.group(1).upper()] = svg_path
+
+    valid_svg_paths = []
+    for hex_code, svg_path in unique_glyphs.items():
         try:
             tree = ET.parse(svg_path)
             root = tree.getroot()
             ns = {'svg': 'http://www.w3.org/2000/svg'}
             paths = root.findall('.//svg:path', ns) or root.findall('.//path')
             raw_d = " ".join([p.attrib.get('d', '') for p in paths])
-            
+
             if not raw_d:
                 continue
-            
+
             tokens = re.findall(r"([a-zA-Z])|([-+]?\d*\.\d+|\d+)", raw_d)
             min_x, max_x, min_y, max_y = calculate_bounding_box(tokens)
-            
+
             if min_x is None:
                 continue
-            
+
             all_min_x.append(min_x)
             all_max_x.append(max_x)
             all_min_y.append(min_y)
             all_max_y.append(max_y)
-            
+            valid_svg_paths.append((hex_code, svg_path))
+
         except Exception as e:
             pass
-    
-    # 用中位數取範圍，排除歪字的影響
+
     all_min_x.sort()
     all_max_x.sort()
     all_min_y.sort()
     all_max_y.sort()
     n = len(all_min_x)
     if n == 0:
-        print(f"找不到有效的 SVG 檔案於 {input_folder}，請確認資料夾路徑與內容。")
+        print(f"找不到有效的 SVG 檔案內容。")
         return
-    
-    # 用 5th / 95th 百分位數，排除最極端的 5%
+
     lo = max(0, int(n * 0.05))
     hi = min(n - 1, int(n * 0.95))
-    
+
     crop_min_x = all_min_x[lo]
     crop_max_x = all_max_x[hi]
     crop_min_y = all_min_y[lo]
     crop_max_y = all_max_y[hi]
-    
+
     crop_width = crop_max_x - crop_min_x
     crop_height = crop_max_y - crop_min_y
     uniform_square = max(crop_width, crop_height)
-    
-    # 居中較短的那邊
+
     crop_center_x = (crop_min_x + crop_max_x) / 2
     crop_center_y = (crop_min_y + crop_max_y) / 2
     global_origin_x = crop_center_x - uniform_square / 2
     global_origin_y = crop_center_y - uniform_square / 2
-    
-    print(f"5%-95% 範圍: X=[{crop_min_x:.2f}, {crop_max_x:.2f}], Y=[{crop_min_y:.2f}, {crop_max_y:.2f}]")
-    print(f"裁剪後寬={crop_width:.2f}, 高={crop_height:.2f}, 統一正方形邊長={uniform_square:.2f}")
-    
-    canvas_size = 300  # 放大到 300x300
-    MARGIN = 15  # 每個字形左右各留的邊距（單位同 units-per-em）
-    FULLWIDTH_ADV = 300   # 全形字（CJK、假名、注音等）推進寬度
-    HALFWIDTH_ADV = 150   # 半形字（ASCII、拉丁字母等）推進寬度
-    
-    # 第二遍掃描：使用最小正方形處理所有 SVG
-    print("處理 SVG 文件...")
+
+    canvas_size = 300
+    FULLWIDTH_ADV = 300
+    HALFWIDTH_ADV = 150
+
+    print(f"處理中...")
     glyph_definitions = []
 
-    for svg_path in svg_files:
-        match = re.search(r'[Uu]\+([0-9A-Fa-f]+)', svg_path.name)
-        if not match:
-            continue
-        
-        hex_code = match.group(1).upper()
+    for hex_code, svg_path in valid_svg_paths:
         codepoint = int(hex_code, 16)
         target_adv = FULLWIDTH_ADV if eaw_is_fullwidth(codepoint) else HALFWIDTH_ADV
         glyph_name = f"icon_{hex_code}"
         unicode_entity = f"&#x{hex_code};"
-        
+
         try:
             tree = ET.parse(svg_path)
             root = tree.getroot()
             ns = {'svg': 'http://www.w3.org/2000/svg'}
             paths = root.findall('.//svg:path', ns) or root.findall('.//path')
             raw_d = " ".join([p.attrib.get('d', '') for p in paths])
-            
-            if not raw_d:
-                continue
 
             tokens = re.findall(r"([a-zA-Z])|([-+]?\d*\.\d+|\d+)", raw_d)
             min_x, max_x, min_y, max_y = calculate_bounding_box(tokens)
-            
-            if min_x is None:
-                continue
-            
-            # 先用全局變換計算這個字形變換後的邊界
+
             scale = canvas_size / uniform_square
             t_min_x = (min_x - global_origin_x) * scale
             t_max_x = (max_x - global_origin_x) * scale
-            # 翻轉後 min/max 互換
             t_min_y = canvas_size - (max_y - global_origin_y) * scale
             t_max_y = canvas_size - (min_y - global_origin_y) * scale
-            
-            # 計算需要的偏移量，讓超出邊界的字移回來
-            # 在 target_adv 寬度內水平置中（全形=300，半形=150）
+
             ink_width = t_max_x - t_min_x
             shift_x = (target_adv - ink_width) / 2 - t_min_x
             shift_y = 0
             if t_min_y < 0:
-                shift_y = -t_min_y  # 往下推
+                shift_y = -t_min_y
             elif t_max_y > canvas_size:
-                shift_y = canvas_size - t_max_y  # 往上推
+                shift_y = canvas_size - t_max_y
 
-            # 固定推進寬度（全形=300，半形=150）
             horiz_adv_x = target_adv
 
             transformed_tokens = transform_tokens_with_shift(
@@ -254,12 +236,11 @@ def create_svg_font_with_flip(input_folder_name, output_file_name):
             )
             transformed_d = " ".join(transformed_tokens)
 
-            # 產出 glyph 標籤
             glyph_def = f'    <glyph glyph-name="{glyph_name}"\n' \
                         f'      unicode="{unicode_entity}"\n' \
                         f'      horiz-adv-x="{horiz_adv_x:.0f}" d="{transformed_d}" />'
             glyph_definitions.append(glyph_def)
-            
+
         except Exception as e:
             print(f"Failed to process {svg_path.name}: {e}")
 
@@ -272,6 +253,17 @@ def create_svg_font_with_flip(input_folder_name, output_file_name):
 
 if __name__ == "__main__":
     base_path = Path(__file__).parent
-    for mode in ['Simple', 'Medium', 'Strong']:
-        input_dir = base_path / f'pico_{mode}'
-        create_svg_font_with_flip(str(input_dir), f'outputs_{mode}.svg')
+    hw02_pico = base_path.parent / "hw02" / "FontPacker" / "pico"
+
+    # 1. Simple = hw03/pico_Simple + hw02/FontPacker/pico
+    simple_files = list((base_path / "pico_Simple").glob("*.svg")) + \
+                   list(hw02_pico.glob("*.svg"))
+    create_svg_font_from_files(simple_files, "outputs_Simple.svg")
+
+    # 2. Medium = hw03/pico_Medium + Simple
+    medium_files = list((base_path / "pico_Medium").glob("*.svg")) + simple_files
+    create_svg_font_from_files(medium_files, "outputs_Medium.svg")
+
+    # 3. Strong = hw03/outputs_Strong + Medium
+    strong_files = list((base_path / "outputs_Strong").glob("*.svg")) + medium_files
+    create_svg_font_from_files(strong_files, "outputs_Strong.svg")

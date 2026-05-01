@@ -1,10 +1,11 @@
 hw02/FontPacker/output/
 hw02/FontPacker/pico/
-hw03/final_font/outputs_Simple/
-hw03/final_font/outputs_Medium/
-hw03/final_font/pico_Simple/
-hw03/final_font/pico_Medium/
-hw03/final_font/pico_Strong/
+hw03/outputs_Simple/
+hw03/outputs_Medium/
+hw03/outputs_Strong/
+hw03/pico_Simple/
+hw03/pico_Medium/
+hw03/pico_Strong/
 *.png
 __pycache__/
 *.pyc

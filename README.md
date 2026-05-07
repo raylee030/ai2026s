@@ -4,6 +4,8 @@
 
 專案主要分為兩大核心模組：**HW02 (FontPacker)** 與 **HW03 (FontDiffuser-Finetune)**。
 
+效果預覽:https://raylee030.github.io/ai2026s/hw00/index.html
+
 ---
 
 ## 專案結構

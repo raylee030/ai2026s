@@ -1,4 +1,4 @@
-\# 🖋️ AI Font Generation \& Packaging Project
+\# AI Font Generation \& Packaging Project
 
 
 
@@ -14,7 +14,7 @@
 
 
 
-\## 📂 專案結構
+\## 專案結構
 
 
 
@@ -70,7 +70,7 @@
 
 
 
-\## 🚀 最新訓練與優化成果 (HW03)
+\## 最新訓練與優化成果 (HW03)
 
 
 
@@ -104,7 +104,7 @@
 
 
 
-\## 🛠️ 如何使用 (Workflow)
+\## 如何使用 (Workflow)
 
 
 
@@ -113,8 +113,6 @@
 
 
 ```bash
-
-\# 於 hw03/fontdiffuser-finetune/ 目錄下執行
 
 train\_phase\_1.bat
 
@@ -131,10 +129,6 @@ train\_phase\_1.bat
 
 
 \### Step 2：批次生成缺字圖片 (HW03)
-
-
-
-當訓練達標後，使用最新權重（如 `global\_step\_10000`）進行字體生成與尺寸校正：
 
 
 
@@ -158,10 +152,6 @@ train\_phase\_1.bat
 
 
 
-將生成的字元圖片移至 `hw02/FontPacker/` 中，進行向量化與打包：
-
-
-
 ```bash
 
 cd ../../hw02/FontPacker
@@ -182,7 +172,7 @@ python merge\_to\_svgfont.py
 
 
 
-\## 📦 環境依賴 (Requirements)
+\## 環境依賴 (Requirements)
 
 
 
@@ -195,10 +185,6 @@ python merge\_to\_svgfont.py
 \- `opencv-python`, `Pillow`
 
 \- `potrace`（用於 HW02 向量化）
-
-
-
-安裝所有依賴：
 
 
 

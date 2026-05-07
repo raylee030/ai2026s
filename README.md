@@ -124,10 +124,6 @@ train\_phase\_1.bat
 
 
 
-\---
-
-
-
 \### Step 2：批次生成缺字圖片 (HW03)
 
 
@@ -141,10 +137,6 @@ train\_phase\_1.bat
 
 
 > 生成的 300x300 高品質字體圖片會儲存於 `outputs\_Strong/`
-
-
-
-\---
 
 
 

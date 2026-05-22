@@ -1,12 +1,12 @@
 hw02/FontPacker/output/
 hw02/FontPacker/pico/
+hw02/FontPacker/png/
 hw03/outputs_Simple/
 hw03/outputs_Medium/
 hw03/outputs_Strong/
 hw03/pico_Simple/
 hw03/pico_Medium/
 hw03/pico_Strong/
-*.png
 __pycache__/
 *.pyc
 *.pyo

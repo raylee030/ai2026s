@@ -17,6 +17,7 @@
             border-radius: 8px;
             pointer-events: none;
             opacity: 0;
+            z-index: 10;
         }
 
         svg {
@@ -54,21 +55,23 @@
         // 設定為自己字的檔名
         var myImg = "113590451.png";
         
-        d3.csv("results.csv").then(function(data) {
+        // 修改路徑為正確的相對路徑
+        d3.csv("compare-similarity/excel/results.csv").then(function(data) {
+            console.log("Data loaded successfully:", data);
 
             // 設定x軸比例尺
             var x = d3.scaleLinear()
                 .domain([0.3, 1]) // ssim
                 .range([ 0, width ]);
 
-            // hover.html
+            // X 軸
             svg.append("g")
                 .attr("transform", "translate(0," + height + ")")
                 .call(d3.axisBottom(x))
                 .append("text")
                 .attr("class", "axis-label")
                 .attr("x", width) 
-                .attr("y", -40) // 改為正 40，讓 SSIM 字樣出現在軸線下方
+                .attr("y", 40) // 讓 SSIM 字樣出現在軸線下方
                 .style("text-anchor", "end")
                 .text("SSIM");
 
@@ -85,9 +88,9 @@
                 .append("text")
                 .attr("class", "axis-label")
                 .attr("transform", "rotate(-90)") // 旋轉標籤
-                .attr("y", 30) // 在Y軸線左方一點的位置
-                .attr("dy", ".71em") // 微調位置
-                .style("text-anchor", "end") // 文本對齊方式
+                .attr("y", -45) // 微調位置
+                .attr("x", -height/2)
+                .style("text-anchor", "middle")
                 .text("LPIPS");
 
             var filteredData = data.filter(function(d) {
@@ -119,9 +122,9 @@
 
             // 加入圖片
             node.append("image")
-                .attr("xlink:href", function(d) { 
-                    return "79CB/" + d.Student; 
-                }) 
+                .attr("xlink:href", function(d) {
+                    return "compare-similarity/79CB/" + d.Student;
+                })
                 .attr("x", -17)
                 .attr("y", -17) 
                 .attr("width", 34) 
@@ -136,15 +139,15 @@
                     
                     tooltip.html(
                         "<div style='margin-bottom:5px; font-weight:bold; font-size: 1.1em;'>" + d.Student + "</div>" +
-                        "<img src='79CB/" + d.Student + "' alt='Handwriting' style='width: 100%; height: auto; border: 1px solid #ccc;'>"
+                        "<img src='compare-similarity/79CB/" + d.Student + "' alt='Handwriting' style='width: 100%; height: auto; border: 1px solid #ccc;'>"
                     )
                     var tooltipNode = document.getElementById("tooltip");
                     var tooltipWidth = tooltipNode.offsetWidth;
                     var tooltipHeight = tooltipNode.offsetHeight;
 
                     tooltip
-                        .style("left", (d3.event.pageX - tooltipWidth - 8) + "px") // 往左位移
-                        .style("top", (d3.event.pageY - tooltipHeight - 8) + "px"); // 往上位移
+                        .style("left", (d3.event.pageX + 10) + "px") // 往右位移
+                        .style("top", (d3.event.pageY - 10) + "px"); // 往上位移
                 })
                 .on("mouseout", function(d) {
                     tooltip.transition()
@@ -152,6 +155,12 @@
                         .style("opacity", 0);
                 });
             
+        }).catch(function(error) {
+            console.error("Error loading the CSV file:", error);
+            d3.select("body").append("div")
+                .style("color", "red")
+                .style("padding", "20px")
+                .text("無法載入資料 (results.csv)，請確認路徑或是否開啟了本地伺服器。錯誤訊息: " + error);
         });
 
     </script>
